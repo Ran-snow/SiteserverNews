@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SiteserverNews.Job
 {
@@ -15,14 +16,14 @@ namespace SiteserverNews.Job
             avatarClient = restClient;
         }
 
-        public AvatarNewModel GetNews()
+        public async Task<AvatarNewModel> GetNews()
         {
             #region Get news
             var request = new RestRequest(Method.GET);
-            request.AddQueryParameter("key", "xxxxxxxxxxxxxxxxxxxxxxx");
-            request.AddQueryParameter("type", "keji");
+            request.AddQueryParameter("key", Program.Config["avatardata:key"]);
+            request.AddQueryParameter("type", Program.Config["avatardata:category"]);
             avatarClient.BaseUrl = new Uri("http://api.avatardata.cn/TouTiao/Query");
-            IRestResponse<AvatarNewModel> response = avatarClient.Execute<AvatarNewModel>(request);
+            IRestResponse<AvatarNewModel> response = await Task.Run(() => avatarClient.Execute<AvatarNewModel>(request));
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -34,9 +35,7 @@ namespace SiteserverNews.Job
                 throw new Exception(@"ERROR-数据->" + response.Data.reason);
             }
 
-
             return response.Data;
-
             #endregion
         }
     }

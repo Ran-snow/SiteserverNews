@@ -1,8 +1,10 @@
-﻿using Quartz;
+﻿using Microsoft.Extensions.Configuration;
+using Quartz;
 using Quartz.Impl;
 using SiteserverNews.Job;
 using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -10,12 +12,13 @@ namespace SiteserverNews
 {
     class Program
     {
+        public static IConfiguration Config;
 
         static void Main(string[] args)
         {
             RunProgram().GetAwaiter().GetResult();
 
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("开始抓取新闻");
             Console.ReadKey();
         }
 
@@ -23,6 +26,10 @@ namespace SiteserverNews
         {
             try
             {
+                Config = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", true, reloadOnChange: true).Build();
+
                 // Grab the Scheduler instance from the Factory
                 NameValueCollection props = new NameValueCollection
                 {
@@ -33,9 +40,10 @@ namespace SiteserverNews
 
                 // and start it off
                 await scheduler.Start();
+                Console.WriteLine("开始执行计划");
 
                 var trigger = TriggerBuilder.Create()
-                .WithSimpleSchedule(x => x.WithIntervalInSeconds(200).RepeatForever())//每两秒执行一次
+                .WithSimpleSchedule(x => x.WithIntervalInHours(12).RepeatForever())
                 .Build();
 
                 var jobDetail = JobBuilder.Create<CreateNewsJob>()
@@ -53,5 +61,5 @@ namespace SiteserverNews
                 Console.WriteLine(ex.Message);
             }
         }
-        }
+    }
 }
