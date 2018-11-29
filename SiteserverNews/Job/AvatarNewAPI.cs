@@ -20,8 +20,8 @@ namespace SiteserverNews.Job
         {
             #region Get news
             var request = new RestRequest(Method.GET);
-            request.AddQueryParameter("key", Program.Config["avatardata:key"]);
-            request.AddQueryParameter("type", Program.Config["avatardata:category"]);
+            request.AddQueryParameter("key", Program.config["avatardata:key"]);
+            request.AddQueryParameter("type", Program.config["avatardata:category"]);
             avatarClient.BaseUrl = new Uri("http://api.avatardata.cn/TouTiao/Query");
             IRestResponse<AvatarNewModel> response = await Task.Run(() => avatarClient.Execute<AvatarNewModel>(request));
 

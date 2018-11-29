@@ -57,10 +57,11 @@ namespace SiteserverNews.Job
             // channelId    path  整数 是 栏目Id
             client = new RestClient("https://www.ipacs.vip/api/v1/contents/1/6");
             var request = new RestRequest(Method.POST);
-            request.AddHeader("X-SS-API-KEY", Program.Config["siteserver:key"]);
+            request.AddHeader("X-SS-API-KEY", Program.config["siteserver:key"]);
             request.AddHeader("Content-Type", "application/json");
             request.AddParameter("undefined", json, ParameterType.RequestBody);
 
+            Program.log.Info("插入新闻->" + json.Replace(Environment.NewLine, string.Empty));
             response = await Task.Run(() => client.Execute(request));
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -79,13 +80,13 @@ namespace SiteserverNews.Job
         {
             string json = SimpleJson.SimpleJson.SerializeObject(new
             {
-                account = Program.Config["siteserver:username"],
-                password = Md5ByString(Program.Config["siteserver:userpwd"])
+                account = Program.config["siteserver:username"],
+                password = Md5ByString(Program.config["siteserver:userpwd"])
             });
 
             var client = new RestClient("https://www.ipacs.vip/api/v1/administrators/actions/login");
             var request = new RestRequest(Method.POST);
-            request.AddHeader("X-SS-API-KEY", Program.Config["siteserver:key"]);
+            request.AddHeader("X-SS-API-KEY", Program.config["siteserver:key"]);
             request.AddParameter("undefined", json, ParameterType.RequestBody);
 
             IRestResponse response = await Task.Run(() => client.Execute(request));

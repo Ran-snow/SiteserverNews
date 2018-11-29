@@ -19,8 +19,7 @@ namespace SiteserverNews.Job
         {
             try
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"当前时间为{DateTime.Now.ToString()},开始执行任务");
+                Program.log.Info($"当前时间为{DateTime.Now.ToString()},开始执行任务");
                 SiteserverContentAPI siteserverContentAPI = new SiteserverContentAPI(restClient);
                 await siteserverContentAPI.Login();
 
@@ -35,25 +34,22 @@ namespace SiteserverNews.Job
 
                 await Task.WhenAll(tasks);
 
-                Console.WriteLine($"当前时间为{DateTime.Now.ToString()},任务完成");
+                Program.log.Info($"当前时间为{DateTime.Now.ToString()},任务完成");
                 return;
             }
             catch (HttpRequestException ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("CreateNewsHttpRequestJob->" + ex.Message);
+                Program.log.Error("CreateNewsHttpRequestJob->" + ex.Message);
                 throw ex;
             }
             catch (NullReferenceException ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("CreateNewsNullReferenceJob->" + ex.Message);
+                Program.log.Error("CreateNewsNullReferenceJob->" + ex.Message);
                 throw ex;
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("CreateNewsExceptionJob->" + ex.Message);
+                Program.log.Error("CreateNewsExceptionJob->" + ex.Message);
                 throw ex;
             }
 
